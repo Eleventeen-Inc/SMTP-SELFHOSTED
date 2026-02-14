@@ -17,23 +17,23 @@ A production-ready, fully Dockerized mail server running **Postfix**, **Dovecot*
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
+┌───────────────────────────────────────────────────────┐
 │                  Docker Container                     │
 │                                                       │
-│  ┌─────────┐  ┌─────────┐  ┌──────────┐             │
-│  │ Postfix  │  │ Dovecot │  │ OpenDKIM │             │
-│  │ (SMTP)   │──│ (IMAP)  │  │ (DKIM)   │             │
-│  │ 25/587/  │  │ 143/993 │  │          │             │
-│  │ 465      │  │ 110/995 │  │          │             │
-│  └─────────┘  └─────────┘  └──────────┘             │
-│       │              │            │                   │
-│  ┌─────────┐  ┌──────────┐  ┌──────────┐            │
-│  │Fail2ban │  │ Rsyslog  │  │Supervisor│            │
-│  │(Security)│  │ (Logging)│  │(Manager) │            │
-│  └─────────┘  └──────────┘  └──────────┘            │
+│       ┌──────────┐  ┌─────────┐  ┌──────────┐         │
+│       │ Postfix  │  │ Dovecot │  │ OpenDKIM │         │
+│       │ (SMTP)   │──│ (IMAP)  │  │ (DKIM)   │         │
+│       │ 25/587/  │  │ 143/993 │  │          │         │
+│       │ 465      │  │ 110/995 │  │          │         │
+│       └──────────┘  └─────────┘  └──────────┘         │
+│            │             │            │               │
+│       ┌──────────┐  ┌──────────┐  ┌──────────┐        │
+│       │Fail2ban  │  │ Rsyslog  │  │Supervisor│        │
+│       │(Security)│  │ (Logging)│  │(Manager) │        │
+│       └──────────┘  └──────────┘  └──────────┘        │
 │                                                       │
-│  Volumes: mail-data | ssl-certs | dkim-keys | logs   │
-└─────────────────────────────────────────────────────┘
+│   Volumes: mail-data | ssl-certs | dkim-keys | logs   │
+└───────────────────────────────────────────────────────┘
 ```
 
 ## Prerequisites
@@ -60,7 +60,7 @@ A production-ready, fully Dockerized mail server running **Postfix**, **Dovecot*
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Eleventeen-Inc/SMPT-SELFHOST.git smtp-server
+git clone https://github.com/Eleventeen-Inc/SMTP-SELFHOSTED.git smtp-server
 cd smtp-server
 ```
 
@@ -750,7 +750,7 @@ ssh root@your-server-ip
 curl -fsSL https://get.docker.com | sh
 
 # 3. Clone the project
-git clone <your-repo-url> /opt/smtp-server
+git clone https://github.com/Eleventeen-Inc/SMTP-SELFHOSTED.git /opt/smtp-server
 cd /opt/smtp-server
 
 # 4. Create the environment file
