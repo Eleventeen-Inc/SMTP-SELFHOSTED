@@ -19,6 +19,10 @@ services:
       - ssl-certs:/etc/letsencrypt          # SSL certificates (persistent)
       - dkim-keys:/etc/opendkim/keys        # DKIM signing keys (persistent)
       - mail-logs:/var/log                  # Log files
+    dns:
+      - 1.1.1.1       # Cloudflare DNS (primary)
+      - 8.8.8.8       # Google DNS (fallback)
+      - 1.0.0.1       # Cloudflare DNS (secondary)
     restart: unless-stopped
     cap_add:
       - NET_ADMIN     # Required for Fail2ban (iptables)
