@@ -300,6 +300,11 @@ mkdir -p /var/spool/postfix/private
 mkdir -p /var/spool/postfix/public
 mkdir -p /var/spool/postfix/pid
 
+# Copy DNS config into Postfix chroot (required for outbound mail delivery)
+mkdir -p /var/spool/postfix/etc
+cp /etc/resolv.conf /var/spool/postfix/etc/resolv.conf
+cp /etc/services /var/spool/postfix/etc/services
+
 # Fix rsyslog for Docker (log to file, not systemd journal)
 if [ -f /etc/rsyslog.conf ]; then
     sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
