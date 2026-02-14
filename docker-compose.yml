@@ -4,35 +4,19 @@ services:
     container_name: mailserver
     hostname: ${MAIL_HOSTNAME:-mail.example.com}
     env_file: .env
-    ports:
-      - "25:25"       # SMTP  - Server-to-server mail delivery
-      - "587:587"     # Submission - Client mail sending (STARTTLS)
-      - "465:465"     # SMTPS - Client mail sending (implicit TLS)
-      - "143:143"     # IMAP  - Mail retrieval
-      - "993:993"     # IMAPS - Mail retrieval (implicit TLS)
-      - "110:110"     # POP3  - Mail retrieval
-      - "995:995"     # POP3S - Mail retrieval (implicit TLS)
-      - "80:80"       # HTTP  - Let's Encrypt certificate validation
-      - "443:443"     # HTTPS
+    network_mode: "host"           # Use host network directly (best for mail servers)
     volumes:
       - mail-data:/var/mail/vhosts          # Email storage (persistent)
       - ssl-certs:/etc/letsencrypt          # SSL certificates (persistent)
       - dkim-keys:/etc/opendkim/keys        # DKIM signing keys (persistent)
       - mail-logs:/var/log                  # Log files
-    dns:
-      - 1.1.1.1       # Cloudflare DNS (primary)
-      - 8.8.8.8       # Google DNS (fallback)
-      - 1.0.0.1       # Cloudflare DNS (secondary)
     restart: unless-stopped
     cap_add:
       - NET_ADMIN     # Required for Fail2ban (iptables)
     # Uncomment to mount custom config files (overrides built-in configs):
-    # volumes:
     #   - ./config/main.cf:/etc/postfix/main.cf
     #   - ./config/master.cf:/etc/postfix/master.cf
     #   - ./dovecot:/etc/dovecot/conf.d/
-    networks:
-      - mailnet
 
 volumes:
   mail-data:
@@ -43,7 +27,3 @@ volumes:
     driver: local
   mail-logs:
     driver: local
-
-networks:
-  mailnet:
-    driver: bridge
