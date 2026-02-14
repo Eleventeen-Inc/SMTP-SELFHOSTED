@@ -60,7 +60,7 @@ A production-ready, fully Dockerized mail server running **Postfix**, **Dovecot*
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url> smtp-server
+git clone https://github.com/Eleventeen-Inc/SMPT-SELFHOST.git smtp-server
 cd smtp-server
 ```
 
