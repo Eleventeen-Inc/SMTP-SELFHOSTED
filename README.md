@@ -524,11 +524,11 @@ openssl s_client -connect mail.yourdomain.com:993
 ```bash
 # Send a test email from inside the container
 docker compose exec mailserver bash -c '
-echo "Subject: Test Email
+echo -e "Subject: Test Email
 From: admin@yourdomain.com
 To: your-external-email@gmail.com
 
-This is a test email from the mail server." | sendmail -t
+This is a test email from the mail server." | sendmail -f admin@yourdomain.com -t
 '
 ```
 
@@ -783,11 +783,11 @@ docker compose exec mailserver cat /etc/opendkim/keys/mydomain.com/default.txt
 
 # 10. Test sending an email
 docker compose exec mailserver bash -c '
-echo "Subject: Test
+echo -e "Subject: Test Email
 From: admin@mydomain.com
 To: test@gmail.com
 
-Hello from my mail server!" | sendmail -t
+Hello from my VPS SMTP server!" | sendmail -f admin@mydomain.com -t
 '
 ```
 
