@@ -1,0 +1,103 @@
+# ============================================================
+#  Postfix Main Configuration
+#  Placeholders {{VAR}} are replaced at container startup
+# ============================================================
+
+smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+biff = no
+
+# Appending .domain is the MUA's job
+append_dot_mydomain = no
+
+readme_directory = no
+
+# Compatibility level
+compatibility_level = 3.6
+
+# ----------------------------------------------------------
+# TLS PARAMETERS
+# ----------------------------------------------------------
+smtpd_tls_cert_file=/etc/letsencrypt/live/{{MAIL_HOSTNAME}}/fullchain.pem
+smtpd_tls_key_file=/etc/letsencrypt/live/{{MAIL_HOSTNAME}}/privkey.pem
+smtp_tls_cert_file=/etc/letsencrypt/live/{{MAIL_HOSTNAME}}/fullchain.pem
+smtp_tls_key_file=/etc/letsencrypt/live/{{MAIL_HOSTNAME}}/privkey.pem
+smtpd_use_tls=yes
+smtpd_tls_security_level=may
+smtp_tls_security_level=may
+
+smtp_tls_CApath=/etc/ssl/certs
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# Disable old/insecure TLS protocols
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+
+# ----------------------------------------------------------
+# SMTP RESTRICTIONS
+# ----------------------------------------------------------
+smtpd_helo_required = yes
+
+smtpd_recipient_restrictions =
+   permit_mynetworks,
+   permit_sasl_authenticated,
+   reject_unauth_destination
+
+smtpd_sender_restrictions =
+   permit_mynetworks,
+   permit_sasl_authenticated,
+   reject_non_fqdn_sender,
+   reject_unknown_sender_domain
+
+smtpd_relay_restrictions =
+   permit_mynetworks,
+   permit_sasl_authenticated,
+   reject_unauth_destination
+
+# ----------------------------------------------------------
+# GENERAL SETTINGS
+# ----------------------------------------------------------
+myhostname = {{MAIL_HOSTNAME}}
+mydomain = {{MAIL_DOMAIN}}
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = $mydomain
+mydestination = $myhostname, localhost.$mydomain, localhost
+relayhost =
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+inet_protocols = all
+home_mailbox = Maildir/
+message_size_limit = {{MESSAGE_SIZE_LIMIT}}
+
+# ----------------------------------------------------------
+# VIRTUAL MAIL CONFIGURATION
+# ----------------------------------------------------------
+virtual_alias_maps = hash:/etc/postfix/virtual
+virtual_mailbox_domains = hash:/etc/postfix/virtual_domains
+virtual_mailbox_base = /var/mail/vhosts
+virtual_mailbox_maps = hash:/etc/postfix/virtual_mailbox
+virtual_minimum_uid = 100
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
+
+# ----------------------------------------------------------
+# SASL AUTHENTICATION (via Dovecot)
+# ----------------------------------------------------------
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+broken_sasl_auth_clients = yes
+
+# ----------------------------------------------------------
+# DKIM (via OpenDKIM milter)
+# ----------------------------------------------------------
+milter_protocol = 6
+milter_default_action = accept
+smtpd_milters = inet:localhost:12301
+non_smtpd_milters = inet:localhost:12301
